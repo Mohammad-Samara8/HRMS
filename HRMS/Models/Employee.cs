@@ -8,5 +8,8 @@
         public string? Email { get; set; }
         public string Position { get; set; }
         public DateTime? BirthDate { get; set; } // Optional / Nullable
+        public long? DepartmentId { get; set; }
+        public long? ManagerId { get; set; }
+        public decimal Salary { get; set; }
     }
 }

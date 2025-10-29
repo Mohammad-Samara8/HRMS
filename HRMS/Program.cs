@@ -1,4 +1,7 @@
 
+using HRMS.DBContexts;
+using Microsoft.EntityFrameworkCore;
+
 namespace HRMS
 {
     public class Program
@@ -13,6 +16,11 @@ namespace HRMS
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddDbContext<HRMSContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("HRMSContext"));
+            });
 
             var app = builder.Build();
 

@@ -1,0 +1,15 @@
+﻿using HRMS.Models;
+using Microsoft.EntityFrameworkCore;
+namespace HRMS.DBContexts
+{
+    public class HRMSContext : DbContext
+    {
+        public HRMSContext(DbContextOptions<HRMSContext> options) : base(options)
+        {
+
+        }
+        //Tables
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Department> Departments { get; set; }
+    }
+}
