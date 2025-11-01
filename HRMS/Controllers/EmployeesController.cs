@@ -10,13 +10,6 @@ namespace HRMS.Controllers
     [ApiController]// Data Annotation
     public class EmployeesController : ControllerBase
     {
-        public static List<Employee> employees = new List<Employee>() { 
-           new Employee(){Id = 1, FirstName = "Ahmad", LastName = "Nassar", Email = "Ahmad@123.com", Position = "Developer", BirthDate = new DateTime(2000,1,25)},
-           new Employee(){Id = 2, FirstName = "Layla", LastName = "Kareem", Position = "Manager", BirthDate = new DateTime(1996,10,21)},
-           new Employee(){Id = 3, FirstName = "Yusef", LastName = "Faris", Position = "HR", BirthDate = new DateTime(1995,5,5)},
-           new Employee(){Id = 4, FirstName = "Nadia", LastName = "Zaid", Email = "Nadia@123.com", Position = "Developer", BirthDate = new DateTime(1991,11,15)}
-        };
-
         //Dependency Injection (DI)
         private readonly HRMSContext _dbContext;
 
@@ -39,6 +32,7 @@ namespace HRMS.Controllers
         {
             var result = from employee in _dbContext.Employees
                          from department in _dbContext.Departments.Where(x => x.Id == employee.DepartmentId).DefaultIfEmpty()
+                         from manager in _dbContext.Employees.Where(x => x.Id == employee.ManagerId).DefaultIfEmpty()
                          where (employeeDto.Position == null || employee.Position.ToUpper().Contains(employeeDto.Position.ToUpper())) && 
                          (employeeDto.Name == null || employee.FirstName.ToUpper().Contains(employeeDto.Name.ToUpper()))
                          orderby employee.Id descending
@@ -51,8 +45,9 @@ namespace HRMS.Controllers
                              Email = employee.Email,
                              Salary= employee.Salary,
                              DepartmentId = employee.DepartmentId,
-                             DepartmentName = department.Name,
+                             //DepartmentName = department.Name,
                              ManagerId = employee.ManagerId,
+                             ManagerName = manager.FirstName + " " + manager.LastName,
                         };
 
             return Ok(result);
@@ -69,13 +64,18 @@ namespace HRMS.Controllers
             {
                 return BadRequest("Id Value Is Invalid");
             }
-            var result = employees.Select(x => new EmployeeDto
+            var result = _dbContext.Employees.Select(x => new EmployeeDto
             {
                 Id = x.Id,
                 Name = x.FirstName + " " + x.LastName,
                 Position = x.Position,
                 BirthDate = x.BirthDate,
-                Email = x.Email
+                Email = x.Email,
+                Salary = x.Salary,
+                DepartmentId = x.DepartmentId,
+                DepartmentName = "",
+                ManagerId = x.ManagerId,
+                ManagerName = "",
             }).FirstOrDefault(x => x.Id == id);
 
             if(result == null)
@@ -91,14 +91,18 @@ namespace HRMS.Controllers
         {
             var employee = new Employee()
             {
-                Id = (employees.LastOrDefault()?.Id ?? 0) + 1,
+                Id = 0, //(employees.LastOrDefault()?.Id ?? 0) + 1,
                 FirstName = employeeDto.FirstName,
                 LastName = employeeDto.LastName,
                 Email = employeeDto.Email,
                 BirthDate = employeeDto.BirthDate,
-                Position = employeeDto.Position
+                Position = employeeDto.Position,
+                Salary = employeeDto.Salary ?? 0,
+                DepartmentId = employeeDto.DepartmentId,
+                ManagerId = employeeDto.ManagerId
             };
-            employees.Add(employee);
+            _dbContext.Employees.Add(employee);
+            _dbContext.SaveChanges(); //Comitt
 
             return Ok();
         }
@@ -106,7 +110,7 @@ namespace HRMS.Controllers
         [HttpPut("Update")] // Update
         public IActionResult Update([FromBody] SaveEmployeeDto employeeDto)
         {
-            var employee = employees.FirstOrDefault(x => x.Id == employeeDto.Id);
+            var employee = _dbContext.Employees.FirstOrDefault(x => x.Id == employeeDto.Id);
 
             if(employee == null)
             {
@@ -118,6 +122,10 @@ namespace HRMS.Controllers
             employee.Email = employeeDto.Email;
             employee.BirthDate = employeeDto.BirthDate;
             employee.Position = employeeDto.Position;
+            employee.Salary = employeeDto.Salary;
+            employee.DepartmentId = employeeDto.DepartmentId;
+            employee.ManagerId = employeeDto.ManagerId;
+            _dbContext.SaveChanges(); //Comitt
 
             return Ok();
         }
@@ -125,14 +133,15 @@ namespace HRMS.Controllers
         [HttpDelete("Delete/{id}")] // Delete
         public IActionResult Delete(long id)
         {
-            var employee = employees.FirstOrDefault(x => x.Id == id);
+            var employee = _dbContext.Employees.FirstOrDefault(x => x.Id == id);
 
             if(employee == null)
             {
                 return NotFound("Employee Does Not Exist"); // 404
             }
 
-            employees.Remove(employee);
+            _dbContext.Employees.Remove(employee);
+            _dbContext.SaveChanges(); //Comitt
             return Ok();
         }
 

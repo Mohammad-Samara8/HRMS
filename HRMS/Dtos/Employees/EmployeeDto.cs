@@ -13,5 +13,6 @@
         public long? DepartmentId { get; set; }
         public string? DepartmentName { get; set; }
         public long? ManagerId { get; set; }
+        public String? ManagerName { get; set; }
     }
 }
