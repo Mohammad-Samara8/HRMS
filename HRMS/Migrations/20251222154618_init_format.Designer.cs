@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HRMS.Migrations
 {
     [DbContext(typeof(HRMSContext))]
-    [Migration("20251103184437_lookups-table")]
-    partial class lookupstable
+    [Migration("20251222154618_init_format")]
+    partial class init_format
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -81,19 +81,26 @@ namespace HRMS.Migrations
                     b.Property<long?>("ManagerId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<long>("PositionId")
+                        .HasColumnType("bigint");
 
-                    b.Property<decimal?>("Salary")
+                    b.Property<decimal>("Salary")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
 
                     b.HasIndex("ManagerId");
+
+                    b.HasIndex("PositionId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique()
+                        .HasFilter("[UserId] IS NOT NULL");
 
                     b.ToTable("Employees");
                 });
@@ -119,6 +126,100 @@ namespace HRMS.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Lookups");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            MajorCode = 0,
+                            MinorCode = 0,
+                            Name = "Employee Positions"
+                        },
+                        new
+                        {
+                            Id = 2L,
+                            MajorCode = 0,
+                            MinorCode = 1,
+                            Name = "Developer"
+                        },
+                        new
+                        {
+                            Id = 3L,
+                            MajorCode = 0,
+                            MinorCode = 2,
+                            Name = "HR"
+                        },
+                        new
+                        {
+                            Id = 4L,
+                            MajorCode = 0,
+                            MinorCode = 3,
+                            Name = "Manager"
+                        },
+                        new
+                        {
+                            Id = 5L,
+                            MajorCode = 1,
+                            MinorCode = 0,
+                            Name = "Department Types"
+                        },
+                        new
+                        {
+                            Id = 6L,
+                            MajorCode = 1,
+                            MinorCode = 1,
+                            Name = "Finance"
+                        },
+                        new
+                        {
+                            Id = 7L,
+                            MajorCode = 1,
+                            MinorCode = 2,
+                            Name = "Adminstrative"
+                        },
+                        new
+                        {
+                            Id = 8L,
+                            MajorCode = 1,
+                            MinorCode = 3,
+                            Name = "Technical"
+                        });
+                });
+
+            modelBuilder.Entity("HRMS.Models.User", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("HashedPassword")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1L,
+                            HashedPassword = "$2a$11$FodwrXysOiJ9lFlf1PZGZOQZH1fvBzBivVnSewumv5QTqlDIXh1/e",
+                            IsAdmin = true,
+                            Username = "Admin"
+                        });
                 });
 
             modelBuilder.Entity("HRMS.Models.Employee", b =>
@@ -131,9 +232,23 @@ namespace HRMS.Migrations
                         .WithMany()
                         .HasForeignKey("ManagerId");
 
+                    b.HasOne("HRMS.Models.Lookup", "Lookup")
+                        .WithMany()
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HRMS.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Department");
 
+                    b.Navigation("Lookup");
+
                     b.Navigation("Manager");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }
