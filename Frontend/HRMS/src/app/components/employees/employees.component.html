@@ -89,11 +89,26 @@
                         <td>{{emp.salary | currency:'USD'}}</td>
                         <td>{{emp.departmentName}}</td>
                         <td>{{emp.managerName}}</td>
+                        <td>
+                            <button type="button"
+                                (click)="loadEmployeeForm(emp.id)"
+                                class="btn btn-outline-success"
+                                data-bs-toggle="modal"
+                                data-bs-target="#saveEmployeeModal">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+
+                            <button type="button"
+                                class="btn btn-outline-danger ms-2 me-2"
+                                (click)="removeEmployee(emp.id)">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </td>
                     </tr>
                     }
                 </tbody>
             </table>
-            <pagination-controls
+            <pagination-controls class="text-end"
                 (pageChange)="changePage($event)"></pagination-controls>
         </div>
     </div>
