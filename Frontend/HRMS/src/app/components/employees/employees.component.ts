@@ -3,10 +3,11 @@ import { Employee } from '../../interfaces/employee';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { ConfirmationDialogComponent } from '../../shared-components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-employees',
-  imports: [CommonModule, ReactiveFormsModule, NgxPaginationModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxPaginationModule, ConfirmationDialogComponent],
   providers: [DatePipe],
   templateUrl: './employees.component.html',
   styleUrl: './employees.component.css'
@@ -18,6 +19,12 @@ export class EmployeesComponent {
   }
 
   @ViewChild('closeDialog') closeDialog: ElementRef | undefined;
+
+  showConfirmationDialog: boolean = false;
+  employeeToBeDeleted: number | undefined;
+
+  deleteDialogTitle: string = "Deletion Confirmation";
+  deleteDialogContent: string = "Are you sure you want to delete this employee?";
 
   paginationConfig = {
     itemsPerPage: 5,
@@ -275,14 +282,23 @@ export class EmployeesComponent {
     }
   }
 
-  removeEmployee(id: number | undefined) {
-    if (!id) {
-      return;
-    }
+  removeEmployee() {
     // this.employees = this.employees.filter(x => x.id != id); // Returns a new array without the deleted id
 
-    let index = this.employees.findIndex(x => x.id == id); // Return Employee Index
+    let index = this.employees.findIndex(x => x.id == this.employeeToBeDeleted); // Return Employee Index
     this.employees.splice(index, 1); // Delete the employee with splice || where start from index and finish after just one index
   }
 
+  showConfirmDialog(empId: number | undefined) {
+    this.employeeToBeDeleted = empId;
+    this.showConfirmationDialog = true;
+  }
+
+  confirmEmployeeDelete(confirm: boolean) {
+    if (confirm) {
+      this.removeEmployee();
+    }
+    this.employeeToBeDeleted = undefined;
+    this.showConfirmationDialog = false;
+  }
 }
