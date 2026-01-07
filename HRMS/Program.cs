@@ -20,6 +20,17 @@ namespace HRMS
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular", builder =>
+                {
+                    // builder.WithOrigins("http://localhost:4200")
+                    builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+                });
+            });
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -46,6 +57,8 @@ namespace HRMS
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("AllowAngular"); // Use This Policy
 
             app.UseHttpsRedirection();
 
