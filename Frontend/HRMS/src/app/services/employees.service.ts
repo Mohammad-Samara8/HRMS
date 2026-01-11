@@ -11,10 +11,11 @@ export class EmployeesService {
 
   constructor(private _http: HttpClient) { }
 
-  getByCriteria() {
+  getByCriteria(searchObj: any) {
     let params = new HttpParams();
-    params = params.set("Name", "");
-    params = params.set("PositionId", "");
+    params = params.set("Name", searchObj.name ?? "");
+    params = params.set("PositionId", searchObj.positionId ?? "");
+    params = params.set("Status", searchObj.status ?? "");
 
     return this._http.get(this.apiUrl + "/GetByCriteria", { params });
   }
@@ -25,5 +26,17 @@ export class EmployeesService {
 
   add(employee: Employee) {
     return this._http.post(this.apiUrl + "/Add", employee);
+  }
+
+  getById(id: number) {
+    return this._http.get(this.apiUrl + `/GetById/${id}`);
+  }
+
+  update(employee: Employee) {
+    return this._http.put(this.apiUrl + "/Update", employee);
+  }
+
+  delete(id: number) {
+    return this._http.delete(this.apiUrl + `/Delete/${id}`);
   }
 }
