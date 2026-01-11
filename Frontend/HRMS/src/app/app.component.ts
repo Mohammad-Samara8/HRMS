@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { NgIf, NgFor, NgClass, NgStyle, CommonModule } from '@angular/common';
 import { RandomColorDirective } from './directives/random-color.directive';
 import { FormsModule, FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,7 +13,9 @@ import { EmployeesComponent } from './components/employees/employees.component';
     ReactiveFormsModule,
     CommonModule,
     ReversePipe,
-    EmployeesComponent],
+    EmployeesComponent,
+    RouterLink,
+    RouterLinkActive],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
