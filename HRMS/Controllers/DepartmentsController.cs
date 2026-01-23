@@ -4,10 +4,11 @@ using HRMS.Models;
 using HRMS.Dtos.shared;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRMS.Controllers
 {
-    // [Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DepartmentsController : ControllerBase

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Employee } from '../interfaces/employee';
 
 @Injectable({
@@ -12,6 +12,11 @@ export class EmployeesService {
   constructor(private _http: HttpClient) { }
 
   getByCriteria(searchObj: any) {
+
+    // let token = localStorage.getItem("token");
+    // let headers = new HttpHeaders();
+    // headers = headers.set("Authorization", `Bearer ${token}`);
+
     let params = new HttpParams();
     params = params.set("Name", searchObj.name ?? "");
     params = params.set("PositionId", searchObj.positionId ?? "");
