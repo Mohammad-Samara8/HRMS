@@ -14,4 +14,7 @@ export interface Employee {
     managerId?: number | null; // Number | Undefined ?? null
     managerName?: string | null;
     userId?: number;
+    image?: any;
+    imagePath?: string;
+    isImage?: boolean;
 }

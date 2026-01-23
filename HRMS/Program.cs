@@ -64,6 +64,7 @@ namespace HRMS
 
             app.UseAuthorization();
 
+            app.UseStaticFiles(); // Middleware
 
             app.MapControllers();
 
