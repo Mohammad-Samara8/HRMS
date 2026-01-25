@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,9 +11,10 @@ import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angula
 })
 export class LoginComponent {
 
-  constructor(private _authService: AuthService) {
+  constructor(private _authService: AuthService, private router: Router) { }
 
-  }
+  errorMessage: string = "";
+  showErrorMessage: boolean = false;
 
   loginForm = new FormGroup({
     username: new FormControl(null, [Validators.required]),
@@ -30,9 +32,13 @@ export class LoginComponent {
       next: (res: any) => {
         //console.log(res); // --> Token
         localStorage.setItem("token", res.token);
+        localStorage.setItem("role", res.role);
+        this.showErrorMessage = false;
+        this.router.navigate(['/']);
       },
       error: err => {
-        console.log(err.error?.message ?? err?.message ?? "Http Response Error")
+        this.errorMessage = err.error;
+        this.showErrorMessage = true;
       }
     })
   }

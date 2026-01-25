@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class AuthService {
 
-  apiUrl: string = "https://localhost:44392/api/Auth";
+  apiUrl: string = "https://localhost:44377/api/Auth";
   constructor(private _http: HttpClient) { }
 
   login(loginForm: any) {
